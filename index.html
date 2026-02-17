@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Meta tags for social media banners, these should be filled in appropriatly as they are your "business card" -->
+  <!-- Replace the content tag with appropriate information -->
+  <meta name="description" content="DexFlyWheel: A Scalable and Self-improving Data Generation Framework for Dexterous Manipulation">
+  <meta property="og:title" content="DexFlyWheel"/>
+  <meta property="og:description" content="A Scalable and Self-improving Data Generation Framework for Dexterous Manipulation"/>
+  <meta property="og:url" content="https://DexFlyWheel.github.io"/>
+  <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X630-->
+  <meta property="og:image" content="static/image/DexFlyWheel_cover.png" />
+  <meta property="og:image:width" content="1200"/>
+  <meta property="og:image:height" content="630"/>
+
+
+  <meta name="twitter:title" content="DexFlyWheel">
+  <meta name="twitter:description" content="A Scalable and Self-improving Data Generation Framework for Dexterous Manipulation">
+  <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X600-->
+  <meta name="twitter:image" content="static/images/DexFlyWheel_cover.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <!-- Keywords for your paper to be indexed by-->
+  <meta name="keywords" content="Robotics, Dexterous Manipulation, Data Generation, Self-improving, Imitation Learning, Reinforcement Learning">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+  <title>DexFlyWheel</title>
+  <link rel="icon" type="image/x-icon" href="static/images/favicon.ico">
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+  rel="stylesheet">
+
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  <script src="static/js/bulma-carousel.min.js"></script>
+  <script src="static/js/bulma-slider.min.js"></script>
+  <script src="static/js/index.js"></script>
+</head>
+<body>
+
+
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+
+            
+            <h1 class="title is-1 publication-title">DexFlyWheel: A Scalable and Self-improving Data Generation Framework for Dexterous Manipulation</h1>
+            <!-- NeurIPS 2025 Spotlight Badge -->
+            <div class="mb-4">
+              <span class="tag is-large is-warning" style="font-size: 1.1rem; font-weight: bold;">
+                NeurIPS 2025 Spotlight (~3.2%)
+              </span>
+            </div>
+            <!-- Publication Links -->
+            <div class="column has-text-centered mb-4">
+              <div class="publication-links">
+                <!-- Paper PDF link -->
+                <span class="link-block">
+                  <a href="https://arxiv.org/abs/2509.23829" target="_blank"
+                  class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                    <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span>
+
+              <!-- Code link -->
+              <span class="link-block">
+                <a href="#" target="_blank"
+                class="external-link button is-normal is-rounded is-dark">
+                <span class="icon">
+                  <i class="fab fa-github"></i>
+                </span>
+                <span>Code (Coming Soon)</span>
+              </a>
+            </span>
+          </div>
+        </div>
+        
+        <!-- Authors -->
+        <div class="is-size-5 publication-authors">
+          <span class="author-block">
+            Kefei Zhu<sup>1,2,4</sup>, Fengshuo Bai<sup>4</sup>, YuanHao Xiang<sup>4</sup>, Yishuai Cai<sup>4</sup>, Xinglin Chen<sup>4</sup>, Ruochong Li<sup>4</sup>,<br>
+            Xingtao Wang<sup>1,5</sup>, Hao Dong<sup>3</sup>, Yaodong Yang<sup>3,4†</sup>, Xiaopeng Fan<sup>1,5†</sup>, Yuanpei Chen<sup>2,3,4†</sup>
+          </span>
+        </div>
+
+        <!-- Institutions -->
+        <div class="is-size-6 publication-authors mt-2">
+          <span class="author-block">
+            <sup>1</sup>Harbin Institute of Technology &nbsp;&nbsp;
+            <sup>2</sup>PsiBot &nbsp;&nbsp;
+            <sup>3</sup>Peking University<br>
+            <sup>4</sup>PKU-Psibot Lab &nbsp;&nbsp;
+            <sup>5</sup>Harbin Institute of Technology Suzhou Research Institute
+          </span>
+        </div>
+        
+        <!-- Corresponding authors note -->
+        <div class="is-size-6 mt-2">
+          <span class="author-block">
+            <sup>†</sup>Corresponding authors
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- After the title section and before Main video -->
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3" style="text-align: center;">Highlights</h2>
+      <div class="content has-text-justified">
+        <ul class="has-text-weight-medium">
+          <li>
+            DexFlyWheel is the <strong style="color: #B70101">first</strong> framework to continuously generate diverse and high-quality dexterous manipulation data across different objects, environments, and spatial settings through a self-improving data flywheel.
+          </li>
+          <li>
+            Starting from a single human demonstration per task, DexFlyWheel scales up to a 500.0× increase in new trajectories and a 214.7× increase in new scenarios, demonstrating <strong style="color: #B70101">scalable</strong> data generation while significantly <strong style="color: #B70101">reducing human effort</strong>.
+          </li>
+          <li>
+            DexFlyWheel exhibits <strong style="color: #B70101">strong generalizability</strong> on unseen scenarios in simulation, and successfully transfer in real dual-arm robot system.
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr style="height: 1px; background-color: #E6E6E6; border: none; margin: 2rem auto; width: 50%;">
+
+<!-- Main video -->
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body" style="text-align: center;">
+      <iframe width="800" height="450"
+              src="https://www.youtube.com/embed/zhrrH56Graw"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen>
+      </iframe>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- Motivation -->
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3" style="text-align: center;">Motivation</h2>
+      <div class="content">
+        <!-- First motivation point -->
+        <div class="columns is-centered">
+          <div class="column">
+            <!-- 替换 motivation1.jpg 为您的图片 -->
+            <img src="static/images/insights1.jpg" alt="Motivation 1" style="width: 100%;"/>
+            <div class="content has-text-justified mt-4">
+              <p>
+                Existing methods are inherently constrained by their source human demonstrations, 
+                <span style="color: #B70101">suffering from limited diversity when handling different objects.</span>
+                This motivates us to rethink the role of human demonstrations in data generation pipelines.
+                <strong>We observe that manipulating different objects only induces minor changes in the manipulation trajectories.</strong>
+                This implies that Human demonstrations provide a strong behavioral prior in data generation.
+                <span style="color: #0066cc">Imitation learning (IL)</span> uses it to imitate 
+                <span style="color: #0066cc">human-like</span> trajectories.
+                <span style="color: rgb(255, 183, 0)">Residual reinforcement learning (res-RL)</span> further refines these priors to handle 
+                <span style="color: rgb(255, 183, 0)">diverse objects scenarios</span>.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Second motivation point -->
+        <div class="columns is-centered mt-6"> <!-- mt-6 adds margin top -->
+          <div class="column">
+            <!-- 替换 motivation2.jpg 为您的图片 -->
+            <img src="static/images/insights2.jpg" alt="Motivation 2" style="width: 100%;"/>
+            <div class="content has-text-justified mt-4">
+              <p>
+                To achieve generalizable dexterous manipulation in the open world, robots need a mechanism for 
+                <strong>continuous data collection and policy performance improvement</strong>. 
+                This inspires us to build a <span style="color: #B70101">data flywheel</span> that enables 
+                <span style="color: #B70101">continuous self-improvement</span>, where better policies generate more diverse data, 
+                and enhanced data leads to more generalizable policies.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Data Generation Pipeline -->
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3" style="text-align: center;">Data Generation Pipeline</h2>
+      <h3 class="subtitle is-5 has-text-centered" style="margin-top: -0.5rem;">From One Demonstration to Diverse Scenarios</h3>
+      <div class="content">
+        <div class="has-text-centered">
+          <div class="video-container" style="margin-top: 1.5rem;">
+            <iframe width="100%" height="450" src="https://www.youtube.com/embed/OUNxbkFuF4M" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Method -->
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3" style="text-align: center;">Method</h2>
+      <div class="content">
+        <div class="has-text-centered">
+          <video autoplay controls muted loop width="100%">
+            <source src="static/videos/method_h264.mp4" type="video/mp4">
+          </video>
+        </div>
+        <p class="has-text-justified mt-4" style="font-size: 0.95rem;">
+          <strong>Overview of DexFlyWheel.</strong> A scalable data generation framework that starts with seed demonstrations warmup and iteratively expands data diversity through a self-improving cycle. Each iteration integrates imitation learning, residual reinforcement learning, rollout trajectory collection, and data augmentation into a closed-loop pipeline.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- Challenges and Insights
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container">
+      <h2 class="title is-3">Fundamental Challenges</h2>
+      <div class="content has-text-centered">
+        <img src="static/images/challenges.jpg" alt="Fundamental Challenges"/>
+      </div>
+      
+      <h2 class="title is-3">Key Insights</h2>
+      <div class="columns is-centered">
+        <div class="column">
+          <img src="static/images/keyinsight1.jpg" alt="Key Insight 1"/>
+        </div>
+        <div class="column">
+          <img src="static/images/keyinsight2.jpg" alt="Key Insight 2"/>
+        </div>
+      </div>
+    </div>
+  </div>
+</section> -->
+
+<!-- Experimental Setups -->
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3" style="text-align: center;">Experimental Setups</h2>
+      <div class="content">
+        <ul class="has-text-justified" style="font-size: 0.95rem;">
+          <li class="mb-3">
+            To validate the effectiveness of our framework across diverse manipulation scenarios, we designed four challenging tasks encompassing both single-arm and dual-arm dexterous manipulation: grasp, pour, lift, and handover. These tasks cover a wide range of manipulation complexities and coordination demands.
+          </li>
+          <li class="mb-3">
+            For each task, we collected <strong>only one</strong> human demonstration through a VR-based teleoperation system.
+          </li>
+          <li class="mb-3">
+            We conducted <strong>three iterations</strong> of data generation within our framework for each task.
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Simulation Results -->
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3" style="text-align: center;">Simulation Results</h2>
+
+      <!-- 1. Simulation Demo Videos -->
+      <h3 class="title is-4" style="text-align: center;">Task Demonstrations</h3>
+      <div class="columns is-multiline is-centered" style="gap: 1rem;">
+        <!-- First row -->
+        <div class="column is-narrow">
+          <div style="width: 450px;">
+            <video autoplay controls muted loop width="100%">
+              <source src="static/videos/graspsim_h264.mp4" type="video/mp4">
+            </video>
+            <p class="has-text-centered">Grasp Task</p>
+          </div>
+        </div>
+        <div class="column is-narrow">
+          <div style="width: 450px;">
+            <video autoplay controls muted loop width="100%">
+              <source src="static/videos/poursim_h264.mp4" type="video/mp4">
+            </video>
+            <p class="has-text-centered">Pour Task</p>
+          </div>
+        </div>
+        <!-- Second row -->
+        <div class="column is-narrow">
+          <div style="width: 450px;">
+            <video autoplay controls muted loop width="100%">
+              <source src="static/videos/liftsim_h264.mp4" type="video/mp4">
+            </video>
+            <p class="has-text-centered">Lift Task</p>
+          </div>
+        </div>
+        <div class="column is-narrow">
+          <div style="width: 450px;">
+            <video autoplay controls muted loop width="100%">
+              <source src="static/videos/handoversim_h264.mp4" type="video/mp4">
+            </video>
+            <p class="has-text-centered">Handover Task</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Iteration Results -->
+      <h3 class="title is-4 mt-6" style="text-align: center;">Iterative Data Generation Process</h3>
+      <div class="content">
+        <p class="has-text-justified">
+          Through three iterations of self-improvement, DexFlyWheel achieves:
+          <ul>
+            <li>Scaling data diversity: <strong style="color: #ff0037">214.7×</strong> total scenarios with <strong style="color: #ff0037">20×</strong> more object variations</li>
+            <li>Improvement in policy generalization: from <strong style="color: #FF00FF">16.5%</strong> to <strong style="color: #FF00FF">81.9%</strong> success rate on unseen scenarios configurations</li>
+            <li>Enhanced policy performance by residual RL: from <strong>48.5%</strong> to <strong style="color: #0000FF">82.6%</strong> success rate through residual RL refinement</li>
+          </ul>
+        </p>
+        <div class="has-text-centered">
+          <img src="static/images/iterationtable.png" alt="Iteration Results" style="max-width: 900px; width: 100%;"/>
+        </div>
+      </div>
+
+      <!-- 3. Performance Scaling -->
+      <h3 class="title is-4 mt-6" style="text-align: center;">Performance Scaling with Diverse Datasets Generated by DexFlyWheel</h3>
+      <div class="content">
+        <p class="has-text-justified" style="font-size: 0.95rem;">
+          With DexFlyWheel, we achieve simultaneous scaling of both data diversity and policy performance. This indicates the effectiveness of DexFlyWheel in generating diverse datasets, which contribute to enhanced policy generalization.
+        </p>
+        <div class="has-text-centered">
+          <img src="static/images/performance.jpg" alt="Performance Results" style="max-width: 900px; width: 100%;"/>
+        </div>
+      </div>
+
+      <!-- 4. Comparison with Baselines -->
+      <h3 class="title is-4 mt-6" style="text-align: center;">Comparison with Baselines</h3>
+      <div class="content">
+        <!-- 插入 Baselines 表格图 -->
+        <div class="has-text-centered mb-3">
+          <img src="static/images/baselines.png" alt="Baseline Comparison Table" style="max-width: 100%; width: 800px;" />
+          <!-- <p style="font-size: 0.85rem; margin-top: 0.5rem;"><em>DexFlyWheel consistently achieves higher success rates than replay-based methods.Compared to the Human Demo baseline, which uses 20 teleoperated trajectories per task, DexFlyWheel achieves vastly superior performance—81.9% vs. 13.4% average success—while requiring only a single human demonstration per task, significantly reducing the human effort.</em></p> -->
+        </div>
+        <p class="has-text-justified" style="font-size: 0.95rem; margin-top: 0.5rem;">
+          DexFlyWheel consistently achieves higher success rates than replay-based methods.Compared to the Human Demo baseline, which uses 20 teleoperated trajectories per task, DexFlyWheel achieves vastly superior performance—81.9% vs. 13.4% average success—while requiring only a single human demonstration per task, significantly reducing the human effort.
+        </p>
+
+
+        <!-- 段落说明 -->
+        <p class="has-text-justified" style="font-size: 0.95rem;">
+          Compared to DexMimicGen, our method demonstrates significant advantages in handling diverse objects and executing dynamic tasks, showcasing superior robustness across various manipulation scenarios.
+        </p>
+
+        <!-- 视频展示 -->
+        <div class="has-text-centered mt-2">
+          <video autoplay controls muted loop width="100%">
+            <source src="static/videos/oursvsbaselines_h264.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+
+
+      <!-- 5. Data Generation Efficiency -->
+      <h3 class="title is-4 mt-6" style="text-align: center;">Data Generation Efficiency of DexFlyWheel</h3>
+      <div class="content">
+        <p class="has-text-justified" style="font-size: 0.95rem;">
+          DexFlyWheel significantly improves data generation efficiency by reducing the time and effort required for collecting successful demonstrations. 
+          Compared to prior methods like human teleoperation and replay-based pipelines, DexFlyWheel achieves faster per-trajectory generation and higher success rates across tasks, 
+          enabling robust and cost-effective dataset creation.
+        </p>
+        <div class="has-text-centered">
+          <img src="static/images/efficiency.png" alt="Data Generation Efficiency" style="max-width: 900px; width: 100%;"/>
+        </div>
+      </div>
+
+
+
+    </div>
+  </div>
+</section>
+
+<!-- Real Robot Results -->
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3" style="text-align: center;"> Real Robot Results</h2>
+      <div class="content">
+        <p class="has-text-justified" style="font-size: 0.95rem;">
+          Based on the data generated by DexFlyWheel, we successfully deployed it on a dual-arm dexterous robot system.
+        </p>
+        <div class="has-text-centered mt-10">
+          <video poster="" autoplay controls muted loop height="100%">
+            <source src="static/videos/real_robot_h264.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Contributions -->
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3" style="text-align: center;">Contributions</h2>
+      <div class="content">
+        <ul class="has-text-justified" style="font-size: 0.95rem;">
+          <li class="mb-3">
+            We propose DexFlyWheel, a scalable and generalizable data generation paradigm for dexterous manipulation. DexFlyWheel autonomously enables the continuous generation of diverse and high-quality data through a self-improving data flywheel mechanism, with minimal human effort.          </li>
+          <li class="mb-3">
+            We empirically demonstrate the  data flywheel effect in dexterous manipulation across four challenging tasks. Starting from a single human demonstration per task, DexFlyWheel leads to a 500.0x increase in new trajectories and a 214.7× increase in new scenario configurations, significantly outperforms replay-only pipelines in diverse data scalability.          </li>
+          <li class="mb-3">
+            We validate the effectiveness of our generated data in training generalizable policies, achieving an average 81.9\% success rate on challenging test sets and significantly outperforming policies trained on data from data generation baselines. Furthermore, we transfer our policies in real-world dual-arm robot system via digital twin, with 78.3% success rate in lift and 63.3% in handover tasks.
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BibTex citation -->
+  <!-- <section class="section" id="BibTeX"> -->
+    <!-- <div class="container is-max-desktop content"> -->
+      <!-- <h2 class="title">BibTeX</h2> -->
+      <!-- <pre><code>BibTex Code Here</code></pre> -->
+    <!-- </div> -->
+<!-- </section> -->
+<!--End BibTex citation
+
+
+  <footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+
+          <p>
+            This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a> which was adopted from the <a href="https://nerfies.github.io" target="_blank">Nerfies</a> project page.
+            You are free to borrow the source code of this website, we just ask that you link back to this page in the footer. <br> This website is licensed under a <a rel="license"  href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Statcounter tracking code -->
+  
+<!-- You can add a tracker to track page visits by creating an account at statcounter.com -->
+
+    <!-- End of Statcounter Code -->
+
+  </body>
+  </html>

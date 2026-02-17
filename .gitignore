@@ -1,0 +1,46 @@
+# System files
+.DS_Store
+Thumbs.db
+*.swp
+.env
+
+# IDE/Editor folders
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# Node modules 
+node_modules/
+package-lock.json
+
+# Build output
+dist/
+build/
+_site/
+
+# Large media files
+# *.mp4
+# *.mov
+# *.avi
+# *.wmv
+
+# Temporary files
+*.log
+*.tmp
+.cache/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+env/
+venv/
+.env/
+.venv/
+
+# Other
+*.bak
+*.backup
+.history/ 
