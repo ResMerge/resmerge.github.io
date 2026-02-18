@@ -1,5 +1,6 @@
 *.pdf
 scripts/
+static/resources/
 
 # System files
 .DS_Store

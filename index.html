@@ -6,13 +6,8 @@
   <meta property="og:title" content="ResMerge"/>
   <meta property="og:description" content="Continual Adaptation of Pretrained Robot Policies via Residual RL and Model Merging"/>
   <meta property="og:url" content="https://resmerge.github.io"/>
-  <meta property="og:image" content="static/figures/teaser_final.png" />
-  <meta property="og:image:width" content="1200"/>
-  <meta property="og:image:height" content="630"/>
-
   <meta name="twitter:title" content="ResMerge">
   <meta name="twitter:description" content="Continual Adaptation of Pretrained Robot Policies via Residual RL and Model Merging">
-  <meta name="twitter:image" content="static/figures/teaser_final.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="keywords" content="Robotics, Continual Learning, Robot Policy, Residual Reinforcement Learning, Model Merging, Generalist Policy">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -74,17 +69,17 @@
       <div class="container is-max-desktop">
         <h2 class="title is-3" style="text-align: center;">Highlights</h2>
         <div class="content has-text-justified">
-          <ul class="has-text-weight-medium">
+          <ol class="has-text-weight-medium">
             <li>
-              We propose a <strong style="color: #B70101">new paradigm</strong> for continual adaptation of pretrained robot policies: learn residual policies via RL and merge compatible models.
+              <strong>Task:</strong> Continual adaptation of <strong style="color: #ff0037">pre-trained robot policies</strong> where robots learn new tasks sequentially while retaining previously acquired skills.
             </li>
             <li>
-              We explore <strong style="color: #B70101">model merging</strong> in residual RL and improve the merging metric, achieving better success rates after merging.
+              <strong>Method:</strong> Propose <strong style="color: #ff0037">RFC (Residual-Field Consistency)</strong> as a geometry-aware metric to guide when and how residual policies can be safely merged, overcoming the failure of task-similarity metrics in residual RL.
             </li>
             <li>
-              ResMerge achieves both <strong style="color: #B70101">generalization</strong> to new task variants and <strong style="color: #B70101">no forgetting</strong> of old tasks—addressing the key challenges of continual fine-tuning.
+              <strong>Performance:</strong> Better <strong style="color: #ff0037">forward transfer</strong>, lower <strong style="color: #ff0037">backward transfer</strong> (less forgetting), and higher <strong style="color: #ff0037">task success rates</strong>—achieved with <strong style="color: #ff0037">minimal data</strong> (no demonstrations) and <strong style="color: #ff0037">parameter-efficient merging</strong>.
             </li>
-          </ul>
+          </ol>
         </div>
       </div>
     </div>
@@ -92,82 +87,46 @@
 
   <hr style="height: 1px; background-color: #E6E6E6; border: none; margin: 2rem auto; width: 50%;">
 
-  <!-- Teaser Figure -->
+  <!-- Motivation: When New Tasks Keep Arriving -->
+  <section class="hero is-small">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <h2 class="title is-3" style="text-align: center;">Motivation: When New Tasks Keep Arriving</h2>
+        <div class="content has-text-justified">
+          <p>
+            Consider a scenario: you have a <strong>generalist robot policy</strong> and a robot deployed in a home or factory environment. The robot needs to <strong>continuously learn 5–10 new tasks</strong> as they arrive sequentially—each task T<sub>k</sub> comes with its dataset D<sub>k</sub>, and the policy must be adapted to handle all tasks without degrading performance on previously learned ones.
+          </p>
+          <h3 class="title is-5 mt-4">Challenges</h3>
+          <p>Existing continual learning (CL) methods are not well suited for adapting pre-trained policies:</p>
+          <ol>
+            <li><strong>Poor generalization</strong> — IL-based PECFT methods often fail to generalize to new task variants.</li>
+            <li><strong>Catastrophic forgetting</strong> — Sequential fine-tuning causes severe parameter interference and performance collapse on old tasks.</li>
+            <li><strong>Costly continual data collection</strong> — Most PECFT methods rely on large amounts of demonstrations per task.</li>
+            <li><strong>Parameter inefficiency</strong> — Maintaining separate adapters per task leads to linear parameter growth and deployment complexity.</li>
+          </ol>
+          <h3 class="title is-5 mt-4">Our Approach</h3>
+          <p>
+            ResMerge addresses these by (1) using <strong>residual RL</strong> for data-efficient adaptation without demonstrations, and (2) using <strong>RFC-guided merging</strong> to consolidate compatible residuals, improving parameter efficiency and multi-task capability while avoiding geometric conflicts that cause task-similarity-based merging to fail.
+          </p>
+          <div class="has-text-centered mt-4 mb-4">
+            <img src="static/images/teaser.png" alt="ResMerge Overview" style="max-width: 900px; width: 100%; border: 1px solid #ddd; border-radius: 8px;" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Overview -->
   <section class="hero teaser">
     <div class="container is-max-desktop">
-      <div class="hero-body" style="text-align: center;">
-        <h2 class="title is-4 mb-4">Overview</h2>
-        <div class="content">
-          <img src="static/figures/teaser_final.png" alt="ResMerge Overview" style="max-width: 900px; width: 100%; border: 1px solid #ddd; border-radius: 8px;" />
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Problem Formulation -->
-  <section class="hero is-small">
-    <div class="hero-body">
-      <div class="container is-max-desktop">
-        <h2 class="title is-3" style="text-align: center;">Problem Formulation</h2>
-        <div class="content">
-          <p class="has-text-justified" style="font-size: 1rem;">
-            Consider a scenario: you have a <strong>generalist robot policy</strong> and a robot deployed in a home or factory environment. 
-            The robot needs to <strong>continuously learn 5–10 new tasks</strong> as they arrive sequentially—each task T<sub>k</sub> comes with its dataset D<sub>k</sub>, 
-            and the policy must be adapted to handle all tasks without degrading performance on previously learned ones.
-          </p>
-          <div class="has-text-centered mt-4">
-            <img src="static/figures/intro.png" alt="Problem Formulation" style="max-width: 800px; width: 100%; border: 1px solid #ddd; border-radius: 8px;" />
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Challenges -->
-  <section class="hero is-small">
-    <div class="hero-body">
-      <div class="container is-max-desktop">
-        <h2 class="title is-3" style="text-align: center;">Challenges of Continual Fine-tuning</h2>
+      <div class="hero-body">
+        <h2 class="title is-3" style="text-align: center;">Overview</h2>
         <div class="content has-text-justified">
-          <p>When continually fine-tuning generalist robot policies, two major challenges arise:</p>
-          <div class="columns mt-4">
-            <div class="column">
-              <div class="box">
-                <h3 class="subtitle is-5" style="color: #B70101;">1. Poor Generalization</h3>
-                <p>IL-based PEFT methods often fail to generalize to new task variants (e.g., different object configurations, environmental settings).</p>
-              </div>
-            </div>
-            <div class="column">
-              <div class="box">
-                <h3 class="subtitle is-5" style="color: #B70101;">2. Catastrophic Forgetting</h3>
-                <p>Traditional fine-tuning approaches cause the model to forget previously learned tasks when adapting to new ones.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Method -->
-  <section class="hero is-small">
-    <div class="hero-body">
-      <div class="container is-max-desktop">
-        <h2 class="title is-3" style="text-align: center;">Method</h2>
-        <div class="content">
-          <div class="has-text-centered">
-            <img src="static/figures/method.png" alt="ResMerge Method" style="max-width: 900px; width: 100%; border: 1px solid #ddd; border-radius: 8px;" />
-          </div>
-          <div class="content has-text-justified mt-4">
-            <p><strong>ResMerge</strong> learns a residual policy Res<sub>k</sub> for each new task T<sub>k</sub> while keeping the base policy frozen. 
-            For task T<sub>k+1</sub>, we first check if existing policies can generalize; if not, we learn a new residual. 
-            We then determine whether the new residual can be <strong>merged</strong> with existing ones—if yes, we merge into a single model; 
-            if no, we add it to the expert pool as an additional specialist.</p>
-            <ul>
-              <li><strong>Learn residual RL:</strong> Each task is learned as a residual correction on top of the frozen base policy.</li>
-              <li><strong>Model merging:</strong> Compatible residuals are merged in parameter space to elicit and combine knowledge.</li>
-              <li><strong>Generalization & no forgetting:</strong> Merging can enhance generalization; the design preserves old task performance.</li>
-            </ul>
+          <p>
+            ResMerge operates in two stages: <strong>Learn</strong> and <strong>Merge</strong>. In Learn, a LoRA-based residual policy is trained on each new task via RL while the base policy stays frozen. In Merge, RFC evaluates compatibility between the new residual and existing experts; compatible ones are merged in parameter space, otherwise added as a new expert. This design directly addresses the challenges below.
+          </p>
+          <div class="has-text-centered mt-4 mb-4">
+            <img src="static/images/method.png" alt="ResMerge Overview" style="max-width: 900px; width: 100%; border: 1px solid #ddd; border-radius: 8px;" />
           </div>
         </div>
       </div>
@@ -179,15 +138,12 @@
     <div class="hero-body">
       <div class="container is-max-desktop">
         <h2 class="title is-3" style="text-align: center;">Experimental Setup</h2>
-        <div class="content">
-          <p class="has-text-justified" style="font-size: 0.95rem;">
-            We evaluate ResMerge in a continual learning setting where tasks arrive sequentially. 
-            For each task T<sub>k</sub>, we assess: (1) performance on the single task, (2) generalization to broader task variants, 
-            and (3) retention of performance on previously learned tasks.
-          </p>
-          <div class="has-text-centered mt-4">
-            <img src="static/figures/tasks.png" alt="Experimental Tasks" style="max-width: 800px; width: 100%; border: 1px solid #ddd; border-radius: 8px;" />
-          </div>
+        <div class="content has-text-justified">
+          <ul>
+            <li><strong>Simulation:</strong> LIBERO benchmark (LIBERO-Spatial and LIBERO-Object), each with 10 sequential long-horizon manipulation tasks. Franka robot in tabletop kitchen setting. Base policies: 32M ViT-based policy and 8B OpenVLA-OFT. 
+            <li><strong>Baselines:</strong> Seq. SFT, ER, PackNet, TAIL, DMPEL, Multi-Task.</li>
+            <li><strong>Metrics:</strong> Forward Transfer (FWT), Negative Backward Transfer (NBT), AUC, Model Parameter Efficiency (MPE), Data Cost.</li>
+          </ul>
         </div>
       </div>
     </div>
@@ -199,83 +155,103 @@
       <div class="container is-max-desktop">
         <h2 class="title is-3" style="text-align: center;">Results</h2>
 
-        <h3 class="title is-4" style="text-align: center;">Main Results</h3>
-        <div class="content">
-          <p class="has-text-justified">
-            ResMerge learns new skills robustly (high success rate) and generalizes more broadly to new task variants. 
-            Model merging performs better with sequential fine-tuning compared to co-finetuning baselines.
+        <!-- <h3 class="title is-4">Experimental Setup</h3>
+        <div class="content has-text-justified">
+          <p>
+            <li><strong>Simulation:</strong> LIBERO benchmark (LIBERO-Spatial and LIBERO-Object), each with 10 sequential long-horizon manipulation tasks. Franka robot in tabletop kitchen setting. Base policies: 32M ViT-based policy and 8B OpenVLA-OFT. Baselines: Seq. SFT, ER, PackNet, TAIL, DMPEL, Multi-Task.</li>
+            <li><strong>Metrics:</strong> Forward Transfer (FWT), Negative Backward Transfer (NBT), AUC, Model Parameter Efficiency (MPE), Data Cost.</li>
           </p>
-          <p class="has-text-centered mt-4" style="color: #888;">
-            <em>Main results table to be added.</em>
-          </p>
-        </div>
+        </div> -->
 
-        <h3 class="title is-4 mt-6" style="text-align: center;">Visualization: Before vs. After Merging</h3>
-        <div class="content">
-          <p class="has-text-justified">
-            Our improved merging metric enables better identification of compatible residuals. 
-            Merging compatible models leads to improved success rates and enhanced generalization.
+        <h3 class="title is-4">Main Results</h3>
+        <div class="content has-text-justified">
+          <p>
+            ResMerge consistently outperforms baselines,
+            <!-- On LIBERO-Spatial: AUC 83% (ViT), 94.7% (OpenVLA); NBT -3%. On LIBERO-Object: AUC 79%, NBT -8%.  -->
+            demonstrating the generalization and no-forgetting claims in Highlights.
           </p>
-        </div>
-
-        <h3 class="title is-4 mt-6" style="text-align: center;">Fusible vs. Non-fusible Groups</h3>
-        <div class="content">
-          <p class="has-text-justified">
-            Tasks that are similar but have correction action fields with large differences may not be suitable for merging. 
-            Our method distinguishes fusible from non-fusible groups to avoid negative interference.
-          </p>
-        </div>
-
-        <h3 class="title is-4 mt-6" style="text-align: center;">Generalization</h3>
-        <div class="content">
-          <p class="has-text-justified">
-            ResMerge exhibits strong generalization: when two models both learn some generalization capability for a new task (but insufficient alone), 
-            merging can elicit and combine this knowledge, leading to improved performance on the generalized task.
-          </p>
-        </div>
-
-        <h3 class="title is-4 mt-6" style="text-align: center;">Task Demonstrations</h3>
-        <div class="columns is-multiline is-centered" style="gap: 1rem;">
-          <div class="column is-narrow">
-            <div style="max-width: 280px;">
-              <img src="static/figures/grab_cube.png" alt="Grab Cube" style="width: 100%; border: 1px solid #ddd; border-radius: 8px;" />
-              <p class="has-text-centered mt-2">Grab Cube</p>
-            </div>
-          </div>
-          <div class="column is-narrow">
-            <div style="max-width: 280px;">
-              <img src="static/figures/pick_banana.png" alt="Pick Banana" style="width: 100%; border: 1px solid #ddd; border-radius: 8px;" />
-              <p class="has-text-centered mt-2">Pick Banana</p>
-            </div>
-          </div>
-          <div class="column is-narrow">
-            <div style="max-width: 280px;">
-              <img src="static/figures/put_pepper.png" alt="Put Pepper" style="width: 100%; border: 1px solid #ddd; border-radius: 8px;" />
-              <p class="has-text-centered mt-2">Put Pepper</p>
-            </div>
+          <div class="has-text-centered mt-4">
+            <img src="static/images/main-results.png" alt="RFC vs Task-Similarity Merge" style="max-width: 800px; width: 100%; border: 1px solid #ddd; border-radius: 8px;" />
           </div>
         </div>
-      </div>
+
+        <!-- <h3 class="title is-4">Ablation Results</h3>
+        <div class="content has-text-justified">
+          <p>
+            We perform a series of ablation studies to analyze the key design choices in ResMerge and their impact on continual learning performance.
+          </p>
+          <div class="has-text-centered mt-4">
+            <img src="static/images/ablation-results.png" alt="Ablation Results" style="max-width: 800px; width: 100%; border: 1px solid #ddd; border-radius: 8px;" />
+          </div>
+        </div> -->
+
+        <h3 class="title is-4 mt-6">Visualization — RFC vs. Task-Similarity Merge</h3>
+        <div class="content has-text-justified">
+          <p>
+            Task-similarity-based merging often combines residuals with conflicting correction fields, causing performance degradation. RFC evaluates direction and scale consistency of residual corrections, enabling reliable merging and higher post-merge success rates (e.g., Merge-SR 78% vs. 21% for merge-all, 54% for no-merge).
+          </p>
+          <div class="has-text-centered mt-4">
+            <img src="static/figures/intro.png" alt="RFC vs Task-Similarity Merge" style="max-width: 800px; width: 100%; border: 1px solid #ddd; border-radius: 8px;" />
+          </div>
+          <!-- <div class="has-text-centered mt-4">
+            <img src="static/tables/rfc-thresholds.svg" alt="RFC Thresholds" style="max-width: 800px; width: 100%; border: 1px solid #ddd; border-radius: 8px;" />
+          </div> -->
+        </div>
+
+        <!-- <h3 class="title is-4 mt-6">The Cost of Every New Task</h3>
+        <div class="content has-text-justified">
+          <p>
+            ResMerge achieves data efficiency (no demonstrations) and parameter efficiency (MPE) through selective merging; compatible residuals are consolidated, controlling parameter growth while preserving performance.
+          </p>
+          <div class="has-text-centered mt-4">
+            <img src="static/tables/ablation-metric.svg" alt="Ablation: Metric" style="max-width: 800px; width: 100%; border: 1px solid #ddd; border-radius: 8px;" />
+          </div>
+          <div class="has-text-centered mt-4">
+            <img src="static/tables/ablation-residual-actor.svg" alt="Ablation: Residual Actor" style="max-width: 800px; width: 100%; border: 1px solid #ddd; border-radius: 8px;" />
+          </div>
+          <div class="has-text-centered mt-4">
+            <img src="static/tables/ablation-strategy.svg" alt="Ablation: Strategy" style="max-width: 800px; width: 100%; border: 1px solid #ddd; border-radius: 8px;" />
+          </div>
+        </div>
+      </div> -->
     </div>
   </section>
 
-  <!-- Contributions -->
+  <!-- Real-world Deployment -->
   <section class="hero is-small">
     <div class="hero-body">
       <div class="container is-max-desktop">
-        <h2 class="title is-3" style="text-align: center;">Contributions</h2>
-        <div class="content">
-          <ul class="has-text-justified" style="font-size: 0.95rem;">
-            <li class="mb-3">
-              We propose a new paradigm for continual adaptation of pretrained robot policies: learning residual policies via RL and merging compatible models.
-            </li>
-            <li class="mb-3">
-              We explore model merging in residual RL and improve the merging metric, achieving better success rates after merging.
-            </li>
-            <li class="mb-3">
-              ResMerge addresses both generalization and catastrophic forgetting—the key challenges in continual fine-tuning of generalist robot policies.
-            </li>
-          </ul>
+        <h2 class="title is-3" style="text-align: center;">Real-world Deployment</h2>
+        <div class="content has-text-justified">
+          <p>
+            Five sequential manipulation tasks (Pick-Banana, Grab-Cube, Put-Pepper, Arrange-Flower, Insert-Pen) on Franka Emika Panda with Octo-small base policy. ResMerge attains FWT 67%, NBT 10%, AUC 76%, significantly outperforming DMPEL (FWT 24%, NBT 23%, AUC 54%), validating the framework's practical applicability and the Highlights' performance claims.
+          </p>
+          <div class="has-text-centered mt-4">
+            <img src="static/images/real-world-results.png" alt="Real-world Results" style="max-width: 800px; width: 100%; border: 1px solid #ddd; border-radius: 8px;" />
+          </div>
+          <div class="has-text-centered mt-4">
+            <img src="static/images/tasks.png" alt="Real-world Results" style="max-width: 800px; width: 100%; border: 1px solid #ddd; border-radius: 8px;" />
+          </div>
+          <div class="columns is-multiline is-centered mt-4" style="gap: 1rem;">
+            <div class="column is-narrow">
+              <div style="max-width: 280px;">
+                <img src="static/images/pick_banana.png" alt="Pick Banana" style="width: 100%; border: 1px solid #ddd; border-radius: 8px;" />
+                <p class="has-text-centered mt-2">Pick Banana</p>
+              </div>
+            </div>
+            <div class="column is-narrow">
+              <div style="max-width: 280px;">
+                <img src="static/images/grab_cube.png" alt="Grab Cube" style="width: 100%; border: 1px solid #ddd; border-radius: 8px;" />
+                <p class="has-text-centered mt-2">Grab Cube</p>
+              </div>
+            </div>
+            <div class="column is-narrow">
+              <div style="max-width: 280px;">
+                <img src="static/images/put_pepper.png" alt="Put Pepper" style="width: 100%; border: 1px solid #ddd; border-radius: 8px;" />
+                <p class="has-text-centered mt-2">Put Pepper</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
