@@ -71,13 +71,13 @@
         <div class="content has-text-justified">
           <ol class="has-text-weight-medium">
             <li>
-              <strong>Task:</strong> Continual adaptation of <strong style="color: #ff0037">pre-trained robot policies</strong> where robots learn new tasks sequentially while retaining previously acquired skills.
+              We propose a novel framework, ResMerge, to tackle <strong style="color: #ff0037">continual</strong> adaptation of <strong style="color: #ff0037">pre-trained</strong> robot policies, enabling robots to sequentially learn new tasks while retaining previously acquired skills.
             </li>
             <li>
-              <strong>Method:</strong> Propose <strong style="color: #ff0037">RFC (Residual-Field Consistency)</strong> as a geometry-aware metric to guide when and how residual policies can be safely merged, overcoming the failure of task-similarity metrics in residual RL.
+              ResMerge introduces <strong style="color: #ff0037">RFC</strong> (Residual-Field Consistency), a geometry-aware metric that guides when and how residual policies can be safely merged—overcoming the fundamental failure of task-similarity metrics in residual RL settings.
             </li>
             <li>
-              <strong>Performance:</strong> Better <strong style="color: #ff0037">forward transfer</strong>, lower <strong style="color: #ff0037">backward transfer</strong> (less forgetting), and higher <strong style="color: #ff0037">task success rates</strong>—achieved with <strong style="color: #ff0037">minimal data</strong> (no demonstrations) and <strong style="color: #ff0037">parameter-efficient merging</strong>.
+              ResMerge achieves superior <strong style="color: #ff0037">forward transfer</strong>, reduced <strong style="color: #ff0037">forgetting</strong>, and higher <strong style="color: #ff0037">task success rates</strong> across continual learning benchmarks, requiring <strong style="color: #ff0037">no demonstrations</strong> and only <strong style="color: #ff0037">parameter-efficient merging</strong>.
             </li>
           </ol>
         </div>
@@ -91,12 +91,25 @@
   <section class="hero is-small">
     <div class="hero-body">
       <div class="container is-max-desktop">
-        <h2 class="title is-3" style="text-align: center;">Motivation: When New Tasks Keep Arriving</h2>
+        <h2 class="title is-3" style="text-align: center;">Motivation</h2>
         <div class="content has-text-justified">
           <p>
             Consider a scenario: you have a <strong>generalist robot policy</strong> and a robot deployed in a home or factory environment. The robot needs to <strong>continuously learn 5–10 new tasks</strong> as they arrive sequentially—each task T<sub>k</sub> comes with its dataset D<sub>k</sub>, and the policy must be adapted to handle all tasks without degrading performance on previously learned ones.
           </p>
-          <h3 class="title is-5 mt-4">Challenges</h3>
+          <div class="has-text-centered mt-4">
+            <img src="static/images/motivation.png" alt="RFC vs Task-Similarity Merge" style="max-width: 900px; width: 100%; border: 1px solid #ddd; border-radius: 8px;" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Challenges
+  <section class="hero is-small">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <h2 class="title is-3" style="text-align: center;">Challenges</h2>
+        <div class="content has-text-justified">
           <p>Existing continual learning (CL) methods are not well suited for adapting pre-trained policies:</p>
           <ol>
             <li><strong>Poor generalization</strong> — IL-based PECFT methods often fail to generalize to new task variants.</li>
@@ -104,30 +117,33 @@
             <li><strong>Costly continual data collection</strong> — Most PECFT methods rely on large amounts of demonstrations per task.</li>
             <li><strong>Parameter inefficiency</strong> — Maintaining separate adapters per task leads to linear parameter growth and deployment complexity.</li>
           </ol>
-          <h3 class="title is-5 mt-4">Our Approach</h3>
-          <p>
-            ResMerge addresses these by (1) using <strong>residual RL</strong> for data-efficient adaptation without demonstrations, and (2) using <strong>RFC-guided merging</strong> to consolidate compatible residuals, improving parameter efficiency and multi-task capability while avoiding geometric conflicts that cause task-similarity-based merging to fail.
-          </p>
-          <div class="has-text-centered mt-4 mb-4">
-            <img src="static/images/teaser.png" alt="ResMerge Overview" style="max-width: 900px; width: 100%; border: 1px solid #ddd; border-radius: 8px;" />
-          </div>
         </div>
       </div>
     </div>
-  </section>
+  </section>  -->
 
-  <!-- Overview -->
+  <!-- Method -->
   <section class="hero teaser">
     <div class="container is-max-desktop">
       <div class="hero-body">
-        <h2 class="title is-3" style="text-align: center;">Overview</h2>
+        <h2 class="title is-3" style="text-align: center;">Method</h2>
         <div class="content has-text-justified">
+          <p>Existing continual learning (CL) methods are not well suited for adapting pre-trained policies:</p>
+          <ol>
+            <li><strong>Poor generalization</strong> — IL-based PECFT methods often fail to generalize to new task variants.</li>
+            <li><strong>Catastrophic forgetting</strong> — Sequential fine-tuning causes severe parameter interference and performance collapse on old tasks.</li>
+            <li><strong>Costly continual data collection</strong> — Most PECFT methods rely on large amounts of demonstrations per task.</li>
+            <li><strong>Parameter inefficiency</strong> — Maintaining separate adapters per task leads to linear parameter growth and deployment complexity.</li>
+          </ol>
           <p>
-            ResMerge operates in two stages: <strong>Learn</strong> and <strong>Merge</strong>. In Learn, a LoRA-based residual policy is trained on each new task via RL while the base policy stays frozen. In Merge, RFC evaluates compatibility between the new residual and existing experts; compatible ones are merged in parameter space, otherwise added as a new expert. This design directly addresses the challenges below.
+            ResMerge addresses these challenges by (1) using <strong>residual RL</strong> for data-efficient adaptation without demonstrations, and (2) using <strong>RFC-guided merging</strong> to consolidate compatible residuals, improving parameter efficiency and multi-task capability while avoiding geometric conflicts that cause task-similarity-based merging to fail.
           </p>
           <div class="has-text-centered mt-4 mb-4">
             <img src="static/images/method.png" alt="ResMerge Overview" style="max-width: 900px; width: 100%; border: 1px solid #ddd; border-radius: 8px;" />
           </div>
+          <p>
+            To be specific, ResMerge operates in two stages: <strong>Learn</strong> and <strong>Merge</strong>. In Learn, a LoRA-based residual policy is trained on each new task via RL while the base policy stays frozen. In Merge, RFC evaluates compatibility between the new residual and existing experts; compatible ones are merged in parameter space, otherwise added as a new expert. This design directly addresses the challenges below.
+          </p>
         </div>
       </div>
     </div>
@@ -191,7 +207,7 @@
             Task-similarity-based merging often combines residuals with conflicting correction fields, causing performance degradation. RFC evaluates direction and scale consistency of residual corrections, enabling reliable merging and higher post-merge success rates (e.g., Merge-SR 78% vs. 21% for merge-all, 54% for no-merge).
           </p>
           <div class="has-text-centered mt-4">
-            <img src="static/figures/intro.png" alt="RFC vs Task-Similarity Merge" style="max-width: 800px; width: 100%; border: 1px solid #ddd; border-radius: 8px;" />
+            <img src="static/images/rfc-vs-similarity.png" alt="RFC vs Task-Similarity Merge" style="max-width: 800px; width: 100%; border: 1px solid #ddd; border-radius: 8px;" />
           </div>
           <!-- <div class="has-text-centered mt-4">
             <img src="static/tables/rfc-thresholds.svg" alt="RFC Thresholds" style="max-width: 800px; width: 100%; border: 1px solid #ddd; border-radius: 8px;" />
