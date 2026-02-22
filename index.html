@@ -37,7 +37,7 @@
           <div class="column has-text-centered">
             <h1 class="title is-1 publication-title">ResMerge: Continual Adaptation of Pretrained Robot Policies via Residual RL and Model Merging</h1>
             <!-- Publication Links -->
-            <div class="column has-text-centered mb-4">
+            <!-- <div class="column has-text-centered mb-4">
               <div class="publication-links">
                 <span class="link-block">
                   <a href="#" target="_blank" class="external-link button is-normal is-rounded is-dark">
@@ -52,10 +52,10 @@
                   </a>
                 </span>
               </div>
-            </div>
+            </div> -->
             <!-- Authors - placeholder, update with actual authors -->
             <div class="is-size-5 publication-authors">
-              <span class="author-block">Authors (To be updated)</span>
+              <span class="author-block">Anonymous Authors</span>
             </div>
           </div>
         </div>
@@ -74,7 +74,7 @@
               We propose a novel framework, ResMerge, to tackle <strong style="color: #ff0037">continual</strong> adaptation of <strong style="color: #ff0037">pre-trained</strong> robot policies, enabling robots to sequentially learn new tasks while retaining previously acquired skills.
             </li>
             <li>
-              ResMerge introduces <strong style="color: #ff0037">RFC</strong> (Residual-Field Consistency), a geometry-aware metric that guides when and how residual policies can be safely merged—overcoming the fundamental failure of task-similarity metrics in residual RL settings.
+              ResMerge operates via a <strong style="color: #ff0037">Learn-and-Merge</strong> framework: in Learn, a <strong style="color: #ff0037">LoRA-based residual policy</strong> is trained per task via RL with the base policy frozen; in Merge, <strong style="color: #ff0037">RFC</strong> (Residual-Field Consistency)—a novel geometry-aware compatibility metric—determines whether the new residual is merged with existing experts in parameter space or registered as a new one.
             </li>
             <li>
               ResMerge achieves superior <strong style="color: #ff0037">forward transfer</strong>, reduced <strong style="color: #ff0037">forgetting</strong>, and higher <strong style="color: #ff0037">task success rates</strong> across continual learning benchmarks, requiring <strong style="color: #ff0037">no demonstrations</strong> and only <strong style="color: #ff0037">parameter-efficient merging</strong>.
@@ -141,9 +141,9 @@
           <div class="has-text-centered mt-4 mb-4">
             <img src="static/images/method.png" alt="ResMerge Overview" style="max-width: 900px; width: 100%; border: 1px solid #ddd; border-radius: 8px;" />
           </div>
-          <p>
+          <!-- <p>
             To be specific, ResMerge operates in two stages: <strong>Learn</strong> and <strong>Merge</strong>. In Learn, a LoRA-based residual policy is trained on each new task via RL while the base policy stays frozen. In Merge, RFC evaluates compatibility between the new residual and existing experts; compatible ones are merged in parameter space, otherwise added as a new expert. This design directly addresses the challenges below.
-          </p>
+          </p> -->
         </div>
       </div>
     </div>
