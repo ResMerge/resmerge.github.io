@@ -66,7 +66,7 @@
     <div class="container is-max-desktop">
       <div class="hero-body">
         <div class="has-text-centered">
-          <img src="static/images/teaser.png" alt="ResMerge teaser" style="max-width: 1000px; width: 100%; border-radius: 8px;" />
+          <img src="static/images/260919-teaser.svg" alt="ResMerge teaser" style="max-width: 1000px; width: 100%; border-radius: 8px;" />
         </div>
         <p class="has-text-centered mt-3" style="color:#555;">
           <strong>ResMerge</strong> enables data- and parameter-efficient continual adaptation of pre-trained robot policies. Each new task is acquired demo-free with residual RL, and its residual is merged into a bounded expert pool based on <strong>Residual-Field Consistency (RFC)</strong>.
@@ -148,7 +148,7 @@
             In <strong>Merge</strong>, the new residual is consolidated with the most compatible existing expert only when their <strong>Residual-Field Consistency (RFC)</strong> exceeds a safety threshold &tau;; otherwise it is registered as a new expert.
           </p>
           <div class="has-text-centered mt-4 mb-4">
-            <img src="static/images/method.png" alt="ResMerge framework" style="max-width: 950px; width: 100%; border: 1px solid #ddd; border-radius: 8px;" />
+            <img src="static/images/260919-method.svg" alt="ResMerge framework" style="max-width: 950px; width: 100%; border: 1px solid #ddd; border-radius: 8px;" />
           </div>
           <p>
             <strong>Why a residual-specific criterion?</strong> Residual policies are <em>correction fields</em> defined relative to a shared frozen controller, not full task behaviors. Two residuals solving very different tasks may apply similar corrections and merge safely, while residuals on similar tasks may apply opposing corrections and destructively interfere. RFC therefore operates directly on the residual action fields, combining a <strong>Direction Consistency (DC)</strong> term (cosine alignment) and a <strong>Magnitude Consistency (MC)</strong> term (bounded scale ratio):
