@@ -69,24 +69,7 @@
           <img src="static/images/260919-teaser.svg" alt="ResMerge teaser" style="max-width: 1000px; width: 100%; border-radius: 8px;" />
         </div>
         <p class="has-text-centered mt-3" style="color:#555;">
-          <strong>ResMerge</strong> enables data- and parameter-efficient continual adaptation of pre-trained robot policies. Each new task is acquired demo-free with residual RL, and its residual is merged into a bounded expert pool based on <strong>Residual-Field Consistency (RFC)</strong>.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Overview Video -->
-  <section class="hero is-small">
-    <div class="hero-body">
-      <div class="container is-max-desktop">
-        <h2 class="title is-3" style="text-align: center;">Watch the Overview</h2>
-        <div class="video-card" style="max-width: 900px; margin: 0 auto;">
-          <video controls playsinline preload="metadata">
-            <source src="static/videos/intro.mp4" type="video/mp4">
-          </video>
-        </div>
-        <p class="has-text-centered mt-3" style="color:#555;">
-          A short video overview of <strong>ResMerge</strong>—the problem, the Learn-and-Merge framework, and key results.
+          <strong>ResMerge</strong> adapts a frozen pre-trained robot policy through residual RL without additional expert demonstrations during adaptation. <strong>Residual-Field Consistency (RFC)</strong> guides selective merging to reduce stored residual parameters; incompatible residuals remain separate experts.
         </p>
       </div>
     </div>
@@ -100,13 +83,13 @@
         <div class="content has-text-justified">
           <ol class="has-text-weight-medium">
             <li>
-              We propose <strong style="color: #ff0037">ResMerge</strong>, a two-stage framework for <strong style="color: #ff0037">continual</strong> adaptation of <strong style="color: #ff0037">pre-trained</strong> robot policies that learns <em>mergeable</em> residual policies on top of a frozen base policy—enabling robots to sequentially acquire new skills while retaining old ones, with <strong style="color: #ff0037">no demonstrations</strong> and a <strong style="color: #ff0037">constant parameter footprint</strong>.
+              We propose <strong style="color: #ff0037">ResMerge</strong>, a two-stage framework for <strong style="color: #ff0037">continual adaptation</strong> of pre-trained robot policies. It learns <em>mergeable</em> residual corrections on top of a frozen base policy with <strong style="color: #ff0037">no additional expert demonstrations during adaptation</strong>. Base-policy initialization uses demonstrations, and residual learning uses online RL interaction.
             </li>
             <li>
               ResMerge operates via a <strong style="color: #ff0037">Learn-and-Merge</strong> loop: in <strong>Learn</strong>, a <strong style="color: #ff0037">LoRA-based residual policy</strong> is trained per task with residual RL on sparse rewards while the base policy is frozen; in <strong>Merge</strong>, <strong style="color: #ff0037">RFC</strong> (Residual-Field Consistency)—a single scalar measuring directional and magnitudinal alignment of two residual action fields—decides whether the new residual is merged with an existing expert or kept as a new one.
             </li>
             <li>
-              We show that conventional <strong style="color: #ff0037">task-similarity metrics fail</strong> for residual merging, whereas RFC enables safe consolidation. ResMerge consistently improves <strong style="color: #ff0037">forward transfer</strong>, reduces <strong style="color: #ff0037">forgetting</strong>, and raises <strong style="color: #ff0037">success rates</strong> on LIBERO across two backbones and on a real-world Franka robot.
+              RFC assesses compatibility in <strong style="color: #ff0037">residual action-field space</strong>, comparing correction direction and magnitude. Experiments on LIBERO across two backbones and on a real-world Franka robot show improved continual learning performance over the evaluated PECFT baselines. Selective merging trades some performance for lower residual storage in settings such as the real-robot study.
             </li>
           </ol>
         </div>
@@ -123,12 +106,12 @@
         <h2 class="title is-3" style="text-align: center;">Motivation</h2>
         <div class="content has-text-justified">
           <p>
-            Consider a <strong>generalist robot policy</strong> deployed in a home or factory. The robot must <strong>continuously learn new tasks</strong> as they arrive sequentially, adapting to each one without degrading performance on tasks it already knows. Existing Parameter-Efficient Continual Fine-Tuning (PECFT) methods isolate per-task updates with adapters, but they
+            Consider a <strong>generalist robot policy</strong> deployed in a home or factory. The robot must <strong>continuously learn new tasks</strong> as they arrive sequentially, adapting to each one without degrading performance on tasks it already knows. Demonstration-trained, adapter-per-task designs for Parameter-Efficient Continual Fine-Tuning (PECFT) isolate updates, but they
             <strong>(1) require substantial per-task demonstrations</strong> and
             <strong>(2) add one adapter per task</strong>, so both data and parameter cost grow linearly with the task stream.
           </p>
           <p>
-            ResMerge removes both bottlenecks: residual RL acquires each task <strong>demo-free</strong>, and RFC-guided parameter-space merging keeps the expert pool <strong>bounded</strong>—a similar task may need an <em>opposing</em> correction (unsafe to merge), while a different task may need an <em>aligned</em> one (safe to merge), which RFC detects directly in residual action space.
+            ResMerge learns residual corrections <strong>without collecting additional expert demonstrations during adaptation</strong> and uses RFC-guided parameter-space merging to reduce storage. A similar task may need an opposing correction, while a different task may need an aligned one. RFC evaluates this compatibility directly in residual action space. When a candidate fails the RFC gate, the expert bank grows; its size is not guaranteed to remain constant.
           </p>
         </div>
       </div>
@@ -144,15 +127,15 @@
           <p>
             ResMerge operates in two stages. In <strong>Learn</strong>, a LoRA-parameterized residual policy
             <em>R</em><sub>cand</sub> is trained on the new task via residual RL with the base policy &pi;<sub>base</sub> frozen; the executed action is
-            <em>a<sub>t</sub></em> = &pi;<sub>base</sub>(<em>o<sub>t</sub></em>) + &alpha;&nbsp;<em>R</em><sub>cand</sub>(<em>o<sub>t</sub></em>).
-            In <strong>Merge</strong>, the new residual is consolidated with the most compatible existing expert only when their <strong>Residual-Field Consistency (RFC)</strong> exceeds a safety threshold &tau;; otherwise it is registered as a new expert.
+            <em>a<sub>t</sub></em> = &pi;<sub>base</sub>(<em>o<sub>t</sub><sup>base</sup>, l<sub>k</sub></em>) + &alpha;&nbsp;<em>R</em><sub>cand</sub>(<em>o<sub>t</sub><sup>res</sup></em>), where <em>l<sub>k</sub></em> is the task instruction and the base and residual observations can differ.
+            In <strong>Merge</strong>, the new residual is consolidated with the most compatible existing expert when their <strong>Residual-Field Consistency (RFC)</strong> meets or exceeds a compatibility threshold &tau;; otherwise it is registered as a new expert.
           </p>
           <div class="has-text-centered mt-4 mb-4">
             <img src="static/images/260919-method.svg" alt="ResMerge framework" style="max-width: 950px; width: 100%; border: 1px solid #ddd; border-radius: 8px;" />
           </div>
           <p>
             <strong>Why a residual-specific criterion?</strong> Residual policies are <em>correction fields</em> defined relative to a shared frozen controller, not full task behaviors. Two residuals solving very different tasks may apply similar corrections and merge safely, while residuals on similar tasks may apply opposing corrections and destructively interfere. RFC therefore operates directly on the residual action fields, combining a <strong>Direction Consistency (DC)</strong> term (cosine alignment) and a <strong>Magnitude Consistency (MC)</strong> term (bounded scale ratio):
-            RFC = DC &middot; MC &isin; [&minus;1, 1]. Compatible LoRA experts are then merged layer-wise with magnitude-aware pruning, cross-task normalization, and RFC-weighted averaging, followed by lightweight post-merge fine-tuning.
+            RFC = DC &middot; MC &isin; [&minus;1, 1]. Compatible LoRA experts are then merged layer-wise with magnitude-aware pruning, source-scale normalization on shared probe observations, and weighted averaging, followed by additional SAC updates on the affected tasks. Reported post-merge success includes both consolidation and RL refinement.
           </p>
         </div>
       </div>
@@ -166,10 +149,12 @@
         <h2 class="title is-3" style="text-align: center;">Experimental Setup</h2>
         <div class="content has-text-justified">
           <ul>
-            <li><strong>Simulation:</strong> LIBERO benchmark (LIBERO-Spatial and LIBERO-Object), each with 10 sequential long-horizon manipulation tasks; base policies pre-trained on LIBERO-90 before continual adaptation.</li>
-            <li><strong>Backbones (deliberately heterogeneous):</strong> a 32M <strong>ViT-T</strong> BC policy and an 8B <strong>OpenVLA-OFT</strong> VLA in simulation, and an <strong>IMLE</strong> BC policy on the real robot. Only the base policy/encoder changes—the residual actor, RFC criterion, and merging operators are the same code path.</li>
-            <li><strong>Baselines:</strong> Sequential SFT, Experience Replay (ER), PackNet, TAIL, DMPEL, and a Multi-Task oracle trained jointly on all tasks.</li>
-            <li><strong>Metrics:</strong> Forward Transfer (FWT), Negative Backward Transfer (NBT), Area Under the success-rate Curve (AUC), Model Parameter Efficiency (MPE), and Data Cost.</li>
+            <li><strong>Simulation:</strong> LIBERO-Spatial and LIBERO-Object. ViT-T uses all 10 tasks per suite; OpenVLA-OFT uses five tasks per suite on which the initial base has nonzero success, with the same subsets for all baselines. Object task IDs are (1, 6, 7, 8, 9), and Spatial task IDs are (0, 2, 3, 6, 7).</li>
+            <li><strong>Base policies and initialization:</strong> the 32M <strong>ViT-T</strong> BC policy is pre-trained on LIBERO-90 and initialized with two demonstrations per target task. The 8B <strong>OpenVLA-OFT</strong> uses the released SimpleVLA-RL checkpoint, initialized by supervised fine-tuning on one trajectory from the target suite. The real-robot <strong>IMLE</strong> BC base uses demonstrations from all four tasks.</li>
+            <li><strong>Residual observations:</strong> simulation pairs a frozen visual base policy with state-based residuals using proprioception and privileged object-to-end-effector pose features. Real-robot residuals use frozen ViT-S RGB features and proprioception, without object poses or privileged simulator state.</li>
+            <li><strong>Baselines:</strong> Sequential SFT, Experience Replay (ER), PackNet, TAIL, DMPEL, and a Multi-Task oracle. ViT-T results for Sequential SFT, ER, PackNet, and Multi-Task are adopted from the LIBERO paper; the residual-RL setup additionally uses state-based observations and online interaction.</li>
+            <li><strong>Metrics:</strong> Forward Transfer (FWT) is average success on future tasks without subtracting initial base success. Negative Backward Transfer (NBT) measures forgetting in percentage points (pp); negative values indicate improvement. AUC averages success on learned tasks across training stages. Average final-stage success rate (SR) is a separate metric.</li>
+            <li><strong>Demonstration counts:</strong> tables count additional expert demonstrations during continual adaptation, excluding base-policy initialization and online RL interaction.</li>
           </ul>
         </div>
       </div>
@@ -185,7 +170,7 @@
         <h3 class="title is-4">Main Results</h3>
         <div class="content has-text-justified">
           <p>
-            On the larger <strong>OpenVLA-OFT</strong> backbone, ResMerge reaches FWT 77%/53% (Spatial/Object), NBT 2%/1%, and AUC 95%/87%—approaching the Multi-Task oracle (95%/94% AUC) <strong>without any per-task demonstrations</strong>, while the Seq. SFT (LoRA) IL baseline still suffers heavy forgetting (NBT 98%/70%). On the smaller <strong>ViT-T</strong> backbone, ResMerge attains the highest AUC (83%/79%) and the most negative NBT (&minus;3%/&minus;8%) among the evaluated baselines. Negative NBT indicates positive backward transfer induced by RFC-based selective merging.
+            On <strong>OpenVLA-OFT</strong>, ResMerge reaches FWT 77%/53% (Spatial/Object), NBT 2/1 pp, and AUC 95%/87%, compared with the Multi-Task oracle's 95%/94% AUC. Seq. SFT (LoRA) has NBT 98/70 pp and AUC 47%/62%. On <strong>ViT-T</strong>, ResMerge attains AUC 83%/79% and NBT &minus;3/&minus;8 pp. These adaptation results require no additional expert demonstrations, while using online RL interaction. Merging does not improve every metric: on OpenVLA-OFT/Object, no-merge achieves FWT 58% and AUC 90%, compared with ResMerge's 53% and 87%.
           </p>
           <div class="table-wrap mt-4">
             <table class="results-table">
@@ -194,41 +179,41 @@
                   <th rowspan="2">Backbone</th>
                   <th rowspan="2">CL Method</th>
                   <th rowspan="2">MPE&nbsp;&uarr;</th>
-                  <th rowspan="2">Data Cost&nbsp;&darr;</th>
+                  <th rowspan="2">Additional demos&nbsp;&darr;</th>
                   <th colspan="3" class="group-sep">LIBERO-Spatial</th>
                   <th colspan="3" class="group-sep">LIBERO-Object</th>
                 </tr>
                 <tr>
-                  <th class="group-sep">FWT&nbsp;&uarr;</th><th>NBT&nbsp;&darr;</th><th>AUC&nbsp;&uarr;</th>
-                  <th class="group-sep">FWT&nbsp;&uarr;</th><th>NBT&nbsp;&darr;</th><th>AUC&nbsp;&uarr;</th>
+                  <th class="group-sep">FWT (%)&nbsp;&uarr;</th><th>NBT (pp)&nbsp;&darr;</th><th>AUC (%)&nbsp;&uarr;</th>
+                  <th class="group-sep">FWT (%)&nbsp;&uarr;</th><th>NBT (pp)&nbsp;&darr;</th><th>AUC (%)&nbsp;&uarr;</th>
                 </tr>
               </thead>
               <tbody>
-                <tr><td rowspan="7"><strong>ViT-T</strong></td><td>Seq. SFT</td><td>—</td><td>50 demos/task</td><td class="group-sep">63</td><td>76</td><td>16</td><td class="group-sep">76</td><td>73</td><td>27</td></tr>
-                <tr><td>ER</td><td>—</td><td>50 demos/task</td><td class="group-sep">63</td><td>29</td><td>50</td><td class="group-sep">70</td><td>28</td><td>57</td></tr>
-                <tr><td>PackNet</td><td>—</td><td>50 demos/task</td><td class="group-sep">57</td><td>15</td><td>59</td><td class="group-sep">58</td><td>18</td><td>56</td></tr>
-                <tr><td>TAIL</td><td>0.70</td><td>50 demos/task</td><td class="group-sep">51</td><td>56</td><td>60</td><td class="group-sep">58</td><td>50</td><td>70</td></tr>
-                <tr><td>DMPEL</td><td>0.69</td><td>50 demos/task</td><td class="group-sep">22</td><td>28</td><td>29</td><td class="group-sep">14</td><td>25</td><td>27</td></tr>
-                <tr class="ours"><td>ResMerge (w/o merge)</td><td>0.69</td><td><strong>0 demo/task</strong></td><td class="group-sep">31</td><td>57</td><td>43</td><td class="group-sep">27</td><td>13</td><td>54</td></tr>
-                <tr class="ours"><td><strong>ResMerge (ours)</strong></td><td class="best">1.00</td><td><strong>0 demo/task</strong></td><td class="group-sep">42</td><td class="pos-bwt">&minus;3</td><td class="pos-bwt">83</td><td class="group-sep">49</td><td class="pos-bwt">&minus;8</td><td class="pos-bwt">79</td></tr>
-                <tr class="oracle"><td><strong>ViT-T</strong></td><td>Multi-Task (oracle)</td><td>—</td><td>50 demos/task</td><td class="group-sep">—</td><td>—</td><td>79</td><td class="group-sep">—</td><td>—</td><td>78</td></tr>
-                <tr><td rowspan="3"><strong>OpenVLA-OFT</strong></td><td>Seq. SFT (LoRA)</td><td>—</td><td>50 demos/task</td><td class="group-sep">0</td><td>98</td><td>47</td><td class="group-sep">10</td><td>70</td><td>62</td></tr>
-                <tr class="ours"><td>ResMerge (w/o merge)</td><td>0.80</td><td><strong>0 demo/task</strong></td><td class="group-sep">68</td><td class="best">&minus;3</td><td>81</td><td class="group-sep">58</td><td>2</td><td class="best">90</td></tr>
-                <tr class="ours"><td><strong>ResMerge (ours)</strong></td><td class="best">1.00</td><td><strong>0 demo/task</strong></td><td class="group-sep best">77</td><td>2</td><td class="best">95</td><td class="group-sep">53</td><td class="best">1</td><td>87</td></tr>
-                <tr class="oracle"><td><strong>OpenVLA-OFT</strong></td><td>Multi-Task (oracle)</td><td>—</td><td>50 demos/task</td><td class="group-sep">—</td><td>—</td><td>95</td><td class="group-sep">—</td><td>—</td><td>94</td></tr>
+                <tr><td rowspan="7"><strong>ViT-T</strong></td><td>Seq. SFT</td><td>—</td><td>50 demos/task</td><td class="group-sep">63&plusmn;2</td><td>76&plusmn;1</td><td>16&plusmn;1</td><td class="group-sep">76&plusmn;3</td><td>73&plusmn;3</td><td>27&plusmn;2</td></tr>
+                <tr><td>ER</td><td>—</td><td>50 demos/task</td><td class="group-sep">63&plusmn;1</td><td>29&plusmn;2</td><td>50&plusmn;2</td><td class="group-sep">70&plusmn;2</td><td>28&plusmn;1</td><td>57&plusmn;1</td></tr>
+                <tr><td>PackNet</td><td>—</td><td>50 demos/task</td><td class="group-sep">57&plusmn;4</td><td>15&plusmn;0</td><td>59&plusmn;3</td><td class="group-sep">58&plusmn;3</td><td>18&plusmn;2</td><td>56&plusmn;4</td></tr>
+                <tr><td>TAIL</td><td>0.70</td><td>50 demos/task</td><td class="group-sep">51&plusmn;0</td><td>56&plusmn;1</td><td>60&plusmn;3</td><td class="group-sep">58&plusmn;2</td><td>50&plusmn;2</td><td>70&plusmn;1</td></tr>
+                <tr><td>DMPEL</td><td>0.69</td><td>50 demos/task</td><td class="group-sep">22&plusmn;2</td><td>28&plusmn;3</td><td>29&plusmn;2</td><td class="group-sep">14&plusmn;3</td><td>25&plusmn;1</td><td>27&plusmn;3</td></tr>
+                <tr class="ours"><td>ResMerge (w/o merge)</td><td>0.69</td><td><strong>0 demos/task</strong></td><td class="group-sep">31&plusmn;3</td><td>57&plusmn;2</td><td>43&plusmn;1</td><td class="group-sep">27&plusmn;2</td><td>13&plusmn;3</td><td>54&plusmn;2</td></tr>
+                <tr class="ours"><td><strong>ResMerge (ours)</strong></td><td class="best">1.00</td><td><strong>0 demos/task</strong></td><td class="group-sep">42&plusmn;1</td><td class="pos-bwt">&minus;3&plusmn;1</td><td class="pos-bwt">83&plusmn;3</td><td class="group-sep">49&plusmn;2</td><td class="pos-bwt">&minus;8&plusmn;1</td><td class="pos-bwt">79&plusmn;1</td></tr>
+                <tr class="oracle"><td><strong>ViT-T</strong></td><td>Multi-Task (oracle)</td><td>—</td><td>50 demos/task</td><td class="group-sep">—</td><td>—</td><td>79&plusmn;1</td><td class="group-sep">—</td><td>—</td><td>78&plusmn;2</td></tr>
+                <tr><td rowspan="3"><strong>OpenVLA-OFT</strong></td><td>Seq. SFT (LoRA)</td><td>—</td><td>50 demos/task</td><td class="group-sep">0&plusmn;0</td><td>98&plusmn;2</td><td>47&plusmn;0</td><td class="group-sep">10&plusmn;1</td><td>70&plusmn;4</td><td>62&plusmn;0</td></tr>
+                <tr class="ours"><td>ResMerge (w/o merge)</td><td>0.80</td><td><strong>0 demos/task</strong></td><td class="group-sep">68&plusmn;1</td><td class="best">&minus;3&plusmn;1</td><td>81&plusmn;1</td><td class="group-sep">58&plusmn;2</td><td>2&plusmn;1</td><td class="best">90&plusmn;0</td></tr>
+                <tr class="ours"><td><strong>ResMerge (ours)</strong></td><td class="best">1.00</td><td><strong>0 demos/task</strong></td><td class="group-sep best">77&plusmn;3</td><td>2&plusmn;1</td><td class="best">95&plusmn;2</td><td class="group-sep">53&plusmn;1</td><td class="best">1&plusmn;1</td><td>87&plusmn;1</td></tr>
+                <tr class="oracle"><td><strong>OpenVLA-OFT</strong></td><td>Multi-Task (oracle)</td><td>—</td><td>50 demos/task</td><td class="group-sep">—</td><td>—</td><td>95&plusmn;0</td><td class="group-sep">—</td><td>—</td><td>94&plusmn;0</td></tr>
               </tbody>
             </table>
           </div>
           <p class="has-text-centered mt-2" style="color:#777; font-size:0.85rem;">
-            Continual learning performance across backbones. MPE is normalized to ResMerge (=1.00 is our footprint; lower means more added parameters per task). Negative NBT = positive backward transfer from RFC-based selective merging.
+            Table I: mean &plusmn; standard deviation over five seeds. FWT and AUC are percentages; NBT is in pp. MPE is the ratio of ResMerge's cumulative added-parameter overhead to the method's overhead, capped at 1.00. Lower MPE means more added parameters; 1.00 does not imply a constant-size expert bank. Dashes in the MPE column denote non-comparable per-task footprints.
           </p>
         </div>
 
         <h3 class="title is-4 mt-6">Ablations</h3>
         <div class="content has-text-justified">
           <p>
-            <strong>Merging strategy</strong> (LIBERO-Object, ViT-T): RFC-gated selective merging is the only strategy that consolidates parameters without destructive interference—<em>no-merge</em> fails to consolidate and <em>merge-all</em> destroys via interference.
-            <strong>Residual architecture:</strong> both MLP and LoRA residuals adapt equally well in the Learn stage (36% SR), but only LoRA survives merging (78% vs. 14% Merge-SR), because the low-rank constraint concentrates each task's adaptation in a structured subspace.
+            <strong>Merging strategy</strong> (LIBERO-Object, ViT-T): RFC-gated merging achieves the highest post-refinement SR and FWT and the lowest NBT among the three evaluated strategies.
+            <strong>Residual architecture:</strong> MLP and LoRA residuals both reach 36% Learn-SR; after merging and RL refinement, their success rates are 14% and 78%, respectively. These comparisons evaluate the complete merging-and-refinement procedure.
           </p>
           <div class="columns is-centered mt-4">
             <div class="column is-half">
@@ -237,12 +222,12 @@
                   <tr><th>Strategy</th><th>Learn-SR</th><th>Merge-SR</th><th>FWT</th><th>NBT</th><th>AUC</th></tr>
                 </thead>
                 <tbody>
-                  <tr><td>No Merge</td><td>36</td><td>54</td><td>27</td><td>22</td><td>47</td></tr>
+                  <tr><td>No Merge</td><td>36</td><td>54</td><td>27</td><td>13</td><td>54</td></tr>
                   <tr><td>Merge-All</td><td>36</td><td>21</td><td>23</td><td>22</td><td>37</td></tr>
                   <tr class="ours"><td><strong>ResMerge (ours)</strong></td><td>36</td><td class="best">78</td><td class="best">49</td><td class="best">&minus;8</td><td class="best">79</td></tr>
                 </tbody>
               </table>
-              <p class="has-text-centered mt-2" style="color:#777; font-size:0.85rem;">Effect of merging strategy (%).</p>
+              <p class="has-text-centered mt-2" style="color:#777; font-size:0.85rem;">Table III: merging strategy. SR, FWT, and AUC in %; NBT in pp. Merge-SR includes RL refinement.</p>
             </div>
             <div class="column is-half">
               <table class="results-table" style="width:100%;">
@@ -254,7 +239,36 @@
                   <tr class="ours"><td><strong>LoRA Residual Policy (ours)</strong></td><td>36</td><td class="best">78</td></tr>
                 </tbody>
               </table>
-              <p class="has-text-centered mt-2" style="color:#777; font-size:0.85rem;">Effect of residual architecture (%).</p>
+              <p class="has-text-centered mt-2" style="color:#777; font-size:0.85rem;">Table IV: residual architecture (%). Merge-SR includes RL refinement.</p>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="title is-4 mt-6">RFC Threshold and Metric Comparisons</h3>
+        <div class="content">
+          <p>Both comparisons use LIBERO-Object with ViT-T. Each threshold is fixed throughout the task sequence. Post-SR includes merging and RL refinement.</p>
+          <div class="columns is-centered mt-4">
+            <div class="column is-half table-wrap">
+              <table class="results-table">
+                <thead><tr><th>Threshold &tau;</th><th>FWT (%)</th><th>NBT (pp)</th><th>AUC (%)</th></tr></thead>
+                <tbody>
+                  <tr><td>0.1</td><td>23</td><td>22</td><td>37</td></tr>
+                  <tr><td>0.3</td><td>49</td><td>&minus;2</td><td>71</td></tr>
+                  <tr class="ours"><td>0.5</td><td>49</td><td>&minus;8</td><td>79</td></tr>
+                  <tr><td>0.7</td><td>27</td><td>22</td><td>47</td></tr>
+                </tbody>
+              </table>
+              <p class="has-text-centered mt-2" style="color:#777; font-size:0.85rem;">Table V: RFC threshold sensitivity.</p>
+            </div>
+            <div class="column is-half table-wrap">
+              <table class="results-table">
+                <thead><tr><th>Metric</th><th>Pre-SR (%)</th><th>Post-SR (%)</th><th>FWT (%)</th><th>NBT (pp)</th><th>AUC (%)</th></tr></thead>
+                <tbody>
+                  <tr><td>Task Similarity</td><td>36.0</td><td>40.0</td><td>26.0</td><td>11.0</td><td>46.0</td></tr>
+                  <tr class="ours"><td>RFC</td><td>36.0</td><td>78.0</td><td>49.0</td><td>&minus;8.0</td><td>78.7</td></tr>
+                </tbody>
+              </table>
+              <p class="has-text-centered mt-2" style="color:#777; font-size:0.85rem;">Table VI: merging metrics. AUC 78.7% is rounded to 79% in the main tables.</p>
             </div>
           </div>
         </div>
@@ -262,14 +276,23 @@
         <h3 class="title is-4 mt-6">Analysis — RFC vs. Task-Similarity Merging</h3>
         <div class="content has-text-justified">
           <p>
-            We visualize the RFC trajectory along the real-robot four-task sequence. Each panel compares the two residual action-correction fields being evaluated: streamlines trace the per-state direction of each field, the background encodes local direction consistency (green: aligned, red: opposed), and the box reports RFC statistics over 2,000 sampled states.
-            <strong>(a)</strong> After <em>R</em><sub>1</sub>,&nbsp;<em>R</em><sub>2</sub>: fields are co-aligned (mean DC 0.81) &rArr; <strong>merge accepted</strong> &rArr; <em>R</em><sub>AB</sub>.
-            <strong>(b)</strong> After <em>R</em><sub>3</sub>: <em>R</em><sub>AB</sub> and <em>R</em><sub>3</sub> disagree almost everywhere (mean DC 0.01) &rArr; <strong>merge rejected</strong>, <em>R</em><sub>3</sub> kept separate.
-            <strong>(c)</strong> After <em>R</em><sub>4</sub>: fields realign (mean DC 0.50) &rArr; <strong>merge accepted</strong> &rArr; <em>R</em><sub>CD</sub>. The final pool {<em>R</em><sub>AB</sub>, <em>R</em><sub>CD</sub>} reproduces the hardware-level grouping exactly.
+            We evaluate RFC along the real-robot four-task sequence. Statistics use 2,000 replay observations sampled with a fixed seed and shared by both experts, using the full 836-dimensional observation representation and 22-dimensional residual actions. RFC compares both direction and magnitude in the original action space; the paper's PCA projection is used only for visualization.
+            <strong>(a)</strong> <em>R</em><sub>1</sub> and <em>R</em><sub>2</sub>: RFC 0.81, 1.25% dangerous states &rArr; <strong>merge accepted</strong> into <em>R</em><sub>AB</sub>.
+            <strong>(b)</strong> <em>R</em><sub>AB</sub> and <em>R</em><sub>3</sub>: RFC 0.01, 96.6% dangerous states &rArr; <strong>merge rejected</strong>; <em>R</em><sub>3</sub> remains separate.
+            <strong>(c)</strong> <em>R</em><sub>3</sub> and <em>R</em><sub>4</sub>: RFC 0.50, 6.6% dangerous states &rArr; <strong>merge accepted</strong> into <em>R</em><sub>CD</sub>. The final pool has two experts for four tasks. These field diagnostics do not by themselves establish closed-loop task success.
           </p>
-          <div class="has-text-centered mt-4">
-            <img src="static/images/rfc-analysis.png" alt="Sequential RFC analysis" style="max-width: 1000px; width: 100%; border: 1px solid #ddd; border-radius: 8px;" />
+          <div class="table-wrap mt-4">
+            <table class="results-table">
+              <thead><tr><th>Compared residuals</th><th>RFC</th><th>Dangerous states (%)</th><th>Decision</th></tr></thead>
+              <tbody>
+                <tr><td>R<sub>1</sub>, R<sub>2</sub></td><td>0.81</td><td>1.25</td><td>Merge into R<sub>AB</sub></td></tr>
+                <tr><td>R<sub>AB</sub>, R<sub>3</sub></td><td>0.01</td><td>96.6</td><td>Keep R<sub>3</sub> separate</td></tr>
+                <tr><td>R<sub>3</sub>, R<sub>4</sub></td><td>0.50</td><td>6.6</td><td>Merge into R<sub>CD</sub></td></tr>
+              </tbody>
+            </table>
           </div>
+          <p class="has-text-centered mt-2" style="color:#777; font-size:0.85rem;">Sequential RFC diagnostics reported in Section V-C. A score meeting or exceeding the compatibility threshold accepts a merge.</p>
+          <p class="mt-4">The real-robot merge-all comparison is an offline field diagnostic; no closed-loop merge-all success rate is reported.</p>
         </div>
       </div>
     </div>
@@ -282,31 +305,55 @@
         <h2 class="title is-3" style="text-align: center;">Real-world Continual Learning</h2>
         <div class="content has-text-justified">
           <p>
-            We deploy ResMerge on a <strong>Franka Emika Panda with a 16-DoF Leap dexterous hand</strong> and a single front-mounted RealSense D435 camera, with a frozen <strong>IMLE BC</strong> base policy. The robot sequentially learns <strong>four tabletop tasks in two paired groups</strong>, giving a hardware-level ground truth for merging:
+            We deploy ResMerge on a <strong>Franka Emika Panda with a 16-DoF Leap dexterous hand</strong> and a single front-mounted RealSense D435 camera, with a frozen <strong>IMLE BC</strong> base policy trained on demonstrations from all four tasks. The robot sequentially adapts to <strong>four tabletop tasks in two paired groups</strong>:
             (<em>T<sub>1</sub></em>)&nbsp;<strong>Pinch-Cube</strong> and (<em>T<sub>2</sub></em>)&nbsp;<strong>Pinch-Apple</strong> pinch-grasp a small object into the box;
             (<em>T<sub>3</sub></em>)&nbsp;<strong>Power-Steel</strong> and (<em>T<sub>4</sub></em>)&nbsp;<strong>Power-Plastic</strong> power-grasp a cup onto the plate.
-            Within each group tasks share grasp primitive and container but differ in object appearance, geometry, and friction; across groups both change.
+            Within each group tasks share grasp primitive and container but differ in object appearance, geometry, and friction. This grouping helps interpret RFC decisions; shared grasp primitives do not establish that policy parameters can be merged successfully.
           </p>
           <div class="has-text-centered mt-4">
             <img src="static/images/real-tasks.png" alt="Real-world continual learning tasks" style="max-width: 950px; width: 100%; border: 1px solid #ddd; border-radius: 8px;" />
           </div>
           <p class="mt-4">
-            ResMerge attains <strong>FWT 50%, NBT 7%, AUC 75%</strong>, outperforming DMPEL on both stability and overall performance. RFC selectively merges (<em>T<sub>1</sub>,T<sub>2</sub></em>) into <em>R</em><sub>AB</sub> and (<em>T<sub>3</sub>,T<sub>4</sub></em>) into <em>R</em><sub>CD</sub>, so the final pool contains <strong>two consolidated experts rather than four</strong>—matching the hardware-level grouping. Notably, RFC isolates residual transferability from base-policy capability: raw success rate would wrongly suggest <em>R</em><sub>1</sub> transfers better to the out-of-group <em>T<sub>3</sub>,T<sub>4</sub></em> than to its in-group partner <em>T<sub>2</sub></em>; measuring similarity in residual action space recovers <em>R</em><sub>1</sub>&sim;<em>R</em><sub>2</sub> as the actually-mergeable pair.
+            ResMerge attains <strong>FWT 50%, NBT 7 pp, and AUC 75%</strong>, compared with DMPEL's 24%, 23 pp, and 54%. RFC merges (<em>T<sub>1</sub>,T<sub>2</sub></em>) into <em>R</em><sub>AB</sub> and (<em>T<sub>3</sub>,T<sub>4</sub></em>) into <em>R</em><sub>CD</sub>, leaving <strong>two consolidated experts rather than four</strong>. Average final-stage success is <strong>72.5%</strong>, compared with <strong>67.0%</strong> for TAIL and <strong>78.75%</strong> without merging. Consolidation retains 92.1% of the no-merge success rate while halving the expert count, at a cost of 6.25 percentage points in average success.
           </p>
           <div class="columns is-centered mt-4">
             <div class="column is-narrow">
               <table class="results-table">
                 <thead>
-                  <tr><th>Method</th><th>FWT&nbsp;&uarr;</th><th>NBT&nbsp;&darr;</th><th>AUC&nbsp;&uarr;</th></tr>
+                  <tr><th>Method</th><th>FWT (%)&nbsp;&uarr;</th><th>NBT (pp)&nbsp;&darr;</th><th>AUC (%)&nbsp;&uarr;</th></tr>
                 </thead>
                 <tbody>
                   <tr><td>DMPEL</td><td>24</td><td>23</td><td>54</td></tr>
                   <tr class="ours"><td><strong>ResMerge (ours)</strong></td><td class="best">50</td><td class="best">7</td><td class="best">75</td></tr>
                 </tbody>
               </table>
-              <p class="has-text-centered mt-2" style="color:#777; font-size:0.85rem;">Real-world continual learning results (%).</p>
+              <p class="has-text-centered mt-2" style="color:#777; font-size:0.85rem;">Table II(a): real-world continual learning. FWT and AUC in %; NBT in pp.</p>
+            </div>
+            <div class="column is-narrow">
+              <table class="results-table">
+                <thead><tr><th>Method</th><th>Avg. SR (%)</th><th>Experts</th></tr></thead>
+                <tbody>
+                  <tr><td>TAIL</td><td>67.0</td><td>—</td></tr>
+                  <tr><td>ResMerge (no merge)</td><td>78.75</td><td>4</td></tr>
+                  <tr class="ours"><td><strong>ResMerge (ours)</strong></td><td>72.5</td><td>2</td></tr>
+                </tbody>
+              </table>
+              <p class="has-text-centered mt-2" style="color:#777; font-size:0.85rem;">Table II(b): average success, distinct from AUC. Dash = unreported expert count.</p>
             </div>
           </div>
+          <h3 class="title is-4 mt-5">Success Across the Task Sequence</h3>
+          <div class="table-wrap">
+            <table class="results-table">
+              <thead><tr><th>Completed stage and residual pool</th><th>T<sub>1</sub></th><th>T<sub>2</sub></th><th>T<sub>3</sub></th><th>T<sub>4</sub></th></tr></thead>
+              <tbody>
+                <tr><td>T<sub>1</sub>: {R<sub>1</sub>}</td><td>85</td><td>35</td><td>55</td><td>55</td></tr>
+                <tr><td>T<sub>2</sub>: {R<sub>AB</sub>}</td><td>75</td><td>60</td><td>55</td><td>50</td></tr>
+                <tr><td>T<sub>3</sub>: {R<sub>AB</sub>, R<sub>3</sub>}</td><td>75</td><td>60</td><td>85</td><td>50</td></tr>
+                <tr class="ours"><td>T<sub>4</sub>: {R<sub>AB</sub>, R<sub>CD</sub>}</td><td>75</td><td>60</td><td>75</td><td>80</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="has-text-centered mt-2" style="color:#777; font-size:0.85rem;">Table VII: success rates (%) over 20 trials per task at each stage. Rows are training stages; columns are evaluated tasks. The final row gives 58 successes in 80 trials (72.5%).</p>
         </div>
       </div>
     </div>

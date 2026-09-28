@@ -1,32 +1,29 @@
 # ResMerge Project Page
 
-This is the project page for **ResMerge: Continual Adaptation of Pretrained Robot Policies via Residual RL and Model Merging**.
+Anonymous project website for **ResMerge: Residual Policy Learning and Merging for Continual Adaptation of Pre-trained Robot Policies**.
 
-## Project Overview
+Website: https://resmerge.github.io/
 
-ResMerge addresses the challenge of continually adapting pretrained generalist robot policies to new tasks. When a robot in a home or factory must sequentially learn 5–10 new tasks, existing methods suffer from:
+ResMerge learns residual corrections on top of a frozen base policy and uses Residual-Field Consistency (RFC) to merge compatible experts. Incompatible candidates remain separate, so the stored expert bank can grow.
 
-- **Poor generalization** — IL-based PEFT methods fail to generalize to new task variants
-- **Catastrophic forgetting** — Traditional fine-tuning causes the model to forget previously learned tasks
+## Experimental scope
 
-ResMerge proposes a new paradigm that combines:
+- Simulation: LIBERO-Spatial and LIBERO-Object, with all ten tasks per suite for ViT-T and five selected tasks per suite for OpenVLA-OFT.
+- Simulation residuals use state-based observations, including privileged object poses; real-robot residuals use frozen visual features and proprioception.
+- Residual adaptation requires no additional expert demonstrations, but base-policy initialization uses demonstrations and adaptation requires online RL interaction.
+- Reported post-merge success includes RL refinement on affected tasks.
 
-- **Residual RL** — Learn each new task as a residual correction on top of a frozen base policy
-- **Model merging** — Merge compatible residuals in parameter space to elicit and combine knowledge
+## Results
 
-## Key Contributions
+The website reproduces Tables I–VII of the accompanying anonymous manuscript. FWT, AUC, and success rates are percentages; NBT is measured in percentage points. Table I reports mean ± standard deviation over five seeds.
 
-- A new paradigm for continual adaptation of pretrained robot policies via residual RL and merging
-- Exploration of model merging in residual RL with an improved merging metric for better success rates
-- Strong generalization to new task variants while avoiding forgetting of old tasks
+On the real robot, ResMerge achieves FWT 50%, NBT 7 pp, and AUC 75%. Average final-stage success is 72.5% with two experts, compared with 78.75% with four experts without merging and 67.0% for TAIL. Average final-stage success and AUC are distinct metrics.
 
-## Website Structure
+## Website contents
 
-The website contains:
+- Method overview and experimental setup
+- Simulation, ablation, and real-robot result tables
+- Sequential RFC diagnostics
+- Representative successful and unsuccessful robot rollouts
 
-- Project overview and highlights
-- Problem formulation and challenges
-- Method description with figures
-- Experimental setup and task demonstrations
-- Results and contributions
-- Links to paper and code (coming soon)
+The page retains anonymous authorship for double-anonymous review. It is based on the [Academic Project Page Template](https://github.com/eliahuhorwitz/Academic-project-page-template).
